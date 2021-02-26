@@ -189,7 +189,7 @@ func (d *applyDelegate) doExecChangePeer(ctx *applyContext) (*raftcmdpb.RaftCMDR
 		d.cell.ID,
 		req.ChangeType.String(),
 		d.cell.Epoch)
-
+	//发生membership changes，增加或者删除peers，ConfVer加1， 对应的的cell发生split或者merge,CellVer版本增加1
 	exists := findPeer(&d.cell, req.Peer.StoreID)
 	d.cell.Epoch.ConfVer++
 
@@ -320,7 +320,7 @@ func (d *applyDelegate) doExecSplit(ctx *applyContext) (*raftcmdpb.RaftCMDRespon
 			StoreID: d.cell.Peers[idx].StoreID,
 		})
 	}
-
+	//cell发生split或者merge,CellVer版本增加1
 	d.cell.Epoch.CellVer++
 	newCell.Epoch.CellVer = d.cell.Epoch.CellVer
 

@@ -167,7 +167,7 @@ func (p *RedisProxy) init() {
 
 	p.initKeyConvert()
 	p.initSupportCMDs()
-	p.initWatcher()
+	p.initWatcher()//
 	p.initQueues()
 }
 
@@ -188,7 +188,7 @@ func (p *RedisProxy) doStop() {
 		p.cancel()
 	})
 }
-
+//init watcher listener for cell range change 以及leader addr更新
 func (p *RedisProxy) initWatcher() {
 	err := p.watcher.Start()
 	if err != nil {
@@ -495,9 +495,9 @@ func (p *RedisProxy) handleReq(r *req) {
 	if len(r.raftReq.Cmd) <= 1 {
 		target = p.getRandomStoreAddr()
 	} else if strings.ToLower(string(r.raftReq.Cmd[0])) == "query" {
-		target = p.getRRStoreAddr()
+		target = p.getRRStoreAddr()// round robin算法获取地址
 	} else {
-		target, cellID = p.getLeaderStoreAddr(r.raftReq.Cmd[1])
+		target, cellID = p.getLeaderStoreAddr(r.raftReq.Cmd[1])//获取leader
 	}
 
 	if log.DebugEnabled() {
@@ -592,7 +592,7 @@ func (p *RedisProxy) getRandomStoreAddr() string {
 
 	return addr
 }
-
+// round robin 算法轮询
 func (p *RedisProxy) getRRStoreAddr() (target string) {
 	p.RLock()
 	total := int64(len(p.bcAddrs))
